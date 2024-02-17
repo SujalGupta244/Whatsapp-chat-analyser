@@ -2,7 +2,7 @@ import re
 import pandas as pd
 
 
-def preprocessor(data):
+def preprocess(data):
     patterns = '\d{2}/\d{2}/\d{4},\s\d{1,2}:\d{2}\u202f?[apmAPM]{2}\s-\s'
     messages = re.split(patterns, data)[1:]
     dates = re.findall(patterns, data)
