@@ -1,6 +1,7 @@
 import streamlit as st
 import preprocessor, helper
 # st.write("Hello world")
+import matplotlib.pyplot as plt
 
 
 st.sidebar.title("Whatsapp Chat Analyser")
@@ -12,13 +13,15 @@ if uploaded_file is not None:
     data = bytes_data.decode('utf-8')
     # st.text(data)
     df = preprocessor.preprocess(data)
+    df = df[df['user'] != 'group_notification']
+
     st.dataframe(df)
 
     # fetch unique users
     user_list = df['user'].unique().tolist()
 
-    if "group_notification" in user_list:
-        user_list.remove("group_notification")
+    # if "group_notification" in user_list:
+    # user_list.remove("group_notification")
     user_list.sort()
     user_list.insert(0,"Overall")
 
@@ -26,6 +29,7 @@ if uploaded_file is not None:
 
     if st.sidebar.button("Show Analysis"):
         
+        # Stats Area
         num_messages, words, num_media_messages, links = helper.fetch_stats(selected_user, df)
 
         col1, col2, col3, col4 = st.columns(4)
@@ -41,3 +45,22 @@ if uploaded_file is not None:
         with col4:
             st.header("links Shared")
             st.title(links)
+
+        
+        # Finding the busiest users in the group(Group Level)
+        if(selected_user == 'Overall'):
+            busy_users, user_percents = helper.most_busy_users(df)
+            fig,ax = plt.subplots(figsize=(8,6)) 
+            
+            st.title("Most Busy Users")
+
+            col1, col2 = st.columns(2)
+    
+            with col1:
+                names = busy_users.index
+                count = busy_users.values
+                ax.bar(names,count)
+                plt.xticks(rotation="vertical")
+                st.pyplot(fig)
+            with col2:
+                st.dataframe(user_percents)

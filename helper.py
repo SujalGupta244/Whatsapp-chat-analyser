@@ -1,7 +1,6 @@
 import re
 from urlextract import URLExtract
 
-
 def fetch_stats(selected_user, df):
     if selected_user != 'Overall':
         df = df[df['user'] == selected_user]
@@ -27,3 +26,13 @@ def fetch_stats(selected_user, df):
     # print(links)
     return num_messages, len(words), num_media_messages, len(links)
         
+
+def most_busy_users(df):
+    # busy user
+    users = df['user'].value_counts().head()
+
+    # perctage of messages
+    users_percent = round((df['user'].value_counts()/df.shape[0])*100,2).reset_index().rename(columns={'index': "name", 'user': 'percent'})
+    # print(users_percent)
+    return users, users_percent
+    # print(users)
