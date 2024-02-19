@@ -13,7 +13,9 @@ if uploaded_file is not None:
     data = bytes_data.decode('utf-8')
     # st.text(data)
     df = preprocessor.preprocess(data)
+    # Removing group notifications
     df = df[df['user'] != 'group_notification']
+    
 
     st.dataframe(df)
 
@@ -64,3 +66,18 @@ if uploaded_file is not None:
                 st.pyplot(fig)
             with col2:
                 st.dataframe(user_percents)
+
+        # WordCloud
+        st.title("Word Cloud")
+        df_wc = helper.create_wordcloud(selected_user, df)
+        fig, ax = plt.subplots()
+        ax.imshow(df_wc)
+        st.pyplot(fig)
+                
+            
+        # Most Used Word
+        st.title("Most Used Words")
+        # Removing media omitted
+        df = df[df['message'] != '<Media omitted>\n']
+        most_used_words = helper.most_used_words(selected_user, df)
+        st.dataframe(most_used_words)

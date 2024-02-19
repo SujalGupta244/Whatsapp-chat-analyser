@@ -1,6 +1,12 @@
 import re
 from urlextract import URLExtract
 
+from wordcloud import WordCloud
+from collections import Counter
+import pandas as pd
+
+
+
 def fetch_stats(selected_user, df):
     if selected_user != 'Overall':
         df = df[df['user'] == selected_user]
@@ -36,3 +42,30 @@ def most_busy_users(df):
     # print(users_percent)
     return users, users_percent
     # print(users)
+
+
+def create_wordcloud(selected_user,df):
+    if selected_user != 'Overall':
+        df = df[df['user'] == selected_user]
+    
+    wc = WordCloud(width=500, height=500, min_font_size=10, background_color='white', random_state=42)
+    # .generate_from_frequencies(df['message'])
+    df_wc = wc.generate(df['message'].str.cat(sep=" "))
+    return df_wc
+
+
+
+def most_used_words(selected_user,df):
+    if selected_user != 'Overall':
+        df = df[df['user'] == selected_user]
+    f = open('stop_hinglish.txt','r')
+    stop_words = f.read()
+    words = []
+    for messages in df['message']:
+        for word in messages.lower().split():
+            if word not in stop_words:
+                words.append(word)
+    words = pd.DataFrame(Counter(words).most_common(20))
+
+    print(words)
+    return words
