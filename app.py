@@ -80,4 +80,9 @@ if uploaded_file is not None:
         # Removing media omitted
         df = df[df['message'] != '<Media omitted>\n']
         most_used_words = helper.most_used_words(selected_user, df)
-        st.dataframe(most_used_words)
+        
+        fig, ax = plt.subplots()
+        ax.barh(most_used_words[0], most_used_words[1])
+        plt.xticks(rotation="vertical")
+        st.pyplot(fig)
+        # st.dataframe(most_used_words)

@@ -47,7 +47,20 @@ def most_busy_users(df):
 def create_wordcloud(selected_user,df):
     if selected_user != 'Overall':
         df = df[df['user'] == selected_user]
-    
+ 
+    f = open('stop_hinglish.txt','r')
+    stop_words = f.read()
+    # Removing 'media omitted' and 'message deleted'
+    df = df[df['message'] != '<Media omitted>\n']
+    df = df[df['message'] != 'This message was deleted\n']
+        
+    def remove_stop_words(message):
+        words = []
+        for word in message.lower().split():
+            if word not in stop_words:
+                words.append(word)
+        return " ".join(words)
+    df['message'] = df['message'].apply(remove_stop_words)
     wc = WordCloud(width=500, height=500, min_font_size=10, background_color='white', random_state=42)
     # .generate_from_frequencies(df['message'])
     df_wc = wc.generate(df['message'].str.cat(sep=" "))
@@ -61,6 +74,9 @@ def most_used_words(selected_user,df):
     f = open('stop_hinglish.txt','r')
     stop_words = f.read()
     words = []
+
+    df = df[df['message'] != 'This message was deleted\n']
+
     for messages in df['message']:
         for word in messages.lower().split():
             if word not in stop_words:
