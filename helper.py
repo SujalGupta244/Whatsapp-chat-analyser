@@ -4,9 +4,14 @@ from urlextract import URLExtract
 from wordcloud import WordCloud
 from collections import Counter
 import pandas as pd
+import emoji
+# from emot.emo_unicode import UNICODE_EMO
+# from emot.emoticons import EMOTICONS, EMOTICONS_EMO
+# import emot
 
-
-
+# text_with_emoticons = "Feeling happy :-) 😊"
+# emoticons = emot.emoticons(text_with_emoticons)
+# print(emoticons)
 def fetch_stats(selected_user, df):
     if selected_user != 'Overall':
         df = df[df['user'] == selected_user]
@@ -83,5 +88,19 @@ def most_used_words(selected_user,df):
                 words.append(word)
     words = pd.DataFrame(Counter(words).most_common(20))
 
-    print(words)
+    # print(words)
     return words
+
+
+def emoji(selected_user,df):
+    if selected_user != 'Overall':
+        df = df[df['user'] == selected_user]
+    
+    emojis = []
+    for message in df['message']:
+        emojis.extend([c for c in message if c in emoji.UNICODE_EMOJI['en']])
+    print(emoji)
+    emoji_df = pd.DataFrame(Counter(emojis).most_common(len(Counter(emojis))))
+    # emoji_df = []
+
+    return emoji_df

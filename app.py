@@ -86,3 +86,8 @@ if uploaded_file is not None:
         plt.xticks(rotation="vertical")
         st.pyplot(fig)
         # st.dataframe(most_used_words)
+
+        # Emoji Analysis
+        st.title("Emoji Analysis")
+        emoji_df = helper.emoji(selected_user, df)
+        st.dataframe(emoji_df)
