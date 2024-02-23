@@ -17,7 +17,7 @@ if uploaded_file is not None:
     df = df[df['user'] != 'group_notification']
     
 
-    st.dataframe(df)
+    # st.dataframe(df)
 
     # fetch unique users
     user_list = df['user'].unique().tolist()
@@ -32,6 +32,7 @@ if uploaded_file is not None:
     if st.sidebar.button("Show Analysis"):
         
         # Stats Area
+        st.title("Top Statistics")
         num_messages, words, num_media_messages, links = helper.fetch_stats(selected_user, df)
 
         col1, col2, col3, col4 = st.columns(4)
@@ -48,7 +49,27 @@ if uploaded_file is not None:
             st.header("links Shared")
             st.title(links)
 
+        # Monthly Message Analysis timeline
+        st.title("Monthly Messages Timeline")
+        timeline = helper.monthly_timeline(selected_user, df)        
         
+        fig, ax = plt.subplots()
+        ax.plot(timeline['time'], timeline['message'])
+        plt.xticks(rotation="vertical")
+        st.pyplot(fig) 
+
+
+        # Daily Message Analysis timeline
+        st.title("Daily Messages Timeline")
+        timeline = helper.daily_timeline(selected_user, df)        
+        
+        fig, ax = plt.subplots()
+        # plt.figure(figsize=(18,10))
+        plt.xticks(rotation="vertical")
+        ax.plot(timeline['only_date'], timeline['message'])
+        st.pyplot(fig) 
+
+
         # Finding the busiest users in the group(Group Level)
         if(selected_user == 'Overall'):
             busy_users, user_percents = helper.most_busy_users(df)
@@ -90,4 +111,15 @@ if uploaded_file is not None:
         # Emoji Analysis
         st.title("Emoji Analysis")
         emoji_df = helper.emoji(selected_user, df)
-        st.dataframe(emoji_df)
+
+        col1, col2 = st.columns(2)
+        with col1:
+            st.dataframe(emoji_df)
+        with col2:
+            fig, ax = plt.subplots()
+            # ax.pie(emoji_df[0], emoji_df[1], labels= emoji_df[0].head(), autopct="%0.2f")
+            st.pyplot(fig)
+
+
+        # Time A
+        
