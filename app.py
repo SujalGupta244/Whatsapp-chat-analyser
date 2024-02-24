@@ -2,7 +2,7 @@ import streamlit as st
 import preprocessor, helper
 # st.write("Hello world")
 import matplotlib.pyplot as plt
-
+import seaborn as sns
 
 st.sidebar.title("Whatsapp Chat Analyser")
 
@@ -88,6 +88,29 @@ if uploaded_file is not None:
             with col2:
                 st.dataframe(user_percents)
 
+
+        # Activity Map
+                
+        st.title("Activity Map")
+        col1, col2 = st.columns(2)
+
+        with col1:
+            st.header("Most Busy Day")
+            busy_day = helper.week_activity_map(selected_user, df)
+            fig, ax = plt.subplots()
+            plt.xticks(rotation="vertical")
+            ax.bar(busy_day.index, busy_day.values)
+            st.pyplot(fig)
+        with col2:
+            st.header("Most Busy Month")
+            busy_month = helper.month_activity_map(selected_user, df)
+            fig, ax = plt.subplots()
+            plt.xticks(rotation="vertical")
+            ax.bar(busy_month.index, busy_month.values)
+            st.pyplot(fig)
+
+
+
         # WordCloud
         st.title("Word Cloud")
         df_wc = helper.create_wordcloud(selected_user, df)
@@ -121,5 +144,11 @@ if uploaded_file is not None:
             st.pyplot(fig)
 
 
-        # Time A
-        
+        # Activity HeatMap
+        st.title("Activity HeatMap")
+        activity = helper.activity_heatmap(selected_user, df)
+        fig,ax = plt.subplots()
+        # plt.figure(figsize=(20,6))
+        ax = sns.heatmap(activity)
+        # plt.yticks(rotation='horizontal')
+        st.pyplot(fig)
